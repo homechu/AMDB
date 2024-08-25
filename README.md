@@ -94,13 +94,3 @@ python manage.py migrate
 python manage.py test
 
 ```
-
-## Manage Command
-路徑：apps/management/management/commands
-```bash
-python manage.py init_AMDB --user "<用户名>" --email "<信箱>"
-
-python manage.py upload_AMDB "<appname>"
-
-python manage.py runscript "<file>"
-```
