@@ -1,0 +1,4 @@
+export APOLLO_URL=
+export APOLLO_APP=
+export APOLLO_NAMESPACE=
+export APOLLO_KEY=

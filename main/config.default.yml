@@ -1,0 +1,64 @@
+main:
+  current_env: 'dev'
+  debug: True
+  level: info
+  project: cmdb_api
+
+security:
+  crypt_key: ''
+
+database:
+  master:
+    host: 127.0.0.1
+    port: 3306
+    name: cmdb
+    key: xxxxx
+  slave:
+    host: 127.0.0.1
+    port: 3306
+    name: cmdb
+    key: xxxxx
+
+redis:
+  master:
+    key: xxxxx
+    nodes:
+    - host: 127.0.0.1
+      port: 30001
+
+  slave:
+    key: xxxxx
+    nodes:
+    - host: 127.0.0.1
+      port: 30001
+
+rabbit:
+  master:
+    host: 127.0.0.1
+    key: xxxxx
+    vhost: 
+    port: 5672
+  slave:
+    host: 127.0.0.1
+    key: xxxxx
+    vhost: 
+    port: 5672
+
+email:
+  email_host: '10.71.40.80'
+  email_port: 25
+  email_key: ''
+  email_subject_prefix: 'amdb'
+  email_tls: False
+
+common:
+  admin_email: 'homechu58@gmail.com'
+
+proxy:
+  host: ''
+  port: 80
+  key: ''
+
+PERMISSION:
+  SAROLES:
+  - 平台管理員

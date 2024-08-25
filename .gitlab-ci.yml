@@ -1,0 +1,95 @@
+stages:
+  - dev
+  - build
+  - deploy
+  - test
+
+merge-request-job:
+  stage: build
+  only:
+    refs:
+      - merge_requests
+    variables:
+      - $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "master"
+  variables:
+    BASE_PATH: '/opt/gitlab/workspace/${CI_PROJECT_NAME}'
+    LABEL_PATH: '/opt/gitlab/workspace/${CI_PROJECT_NAME}/_tmp.env'
+    INFO_PATH: '/opt/gitlab/workspace/${CI_PROJECT_NAME}/_merge_request.json'
+  script:
+    - '
+      if [[ ! -d "${BASE_PATH}" ]]; then
+        mkdir -p ${BASE_PATH};
+      fi;
+      echo "==========";
+      if [[ -n "${CI_MERGE_REQUEST_LABELS}" ]]; then
+        echo ${CI_MERGE_REQUEST_LABELS} | sed "s/,/ /g" > ${LABEL_PATH};
+      else
+        echo ${CI_PROJECT_NAME} | sed "s/,/ /g" > ${LABEL_PATH};
+      fi;
+      cat ${LABEL_PATH};
+      echo "==========";
+      echo "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests/${CI_MERGE_REQUEST_IID}";
+      echo "${INFO_PATH}";
+      wget "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests/${CI_MERGE_REQUEST_IID}"
+        --header="Authorization: Bearer ${GITLAB_TOKEN}"
+        -O ${INFO_PATH} --no-check-certificate;
+      '
+
+merge-succeed-deploy-job:
+  stage: deploy
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master" && $CI_PIPELINE_SOURCE == "push"'
+  variables:
+    BASE_PATH: '/opt/gitlab/workspace/${CI_PROJECT_NAME}'
+    LABEL_PATH: '/opt/gitlab/workspace/${CI_PROJECT_NAME}/_tmp.env'
+    INFO_PATH: '/opt/gitlab/workspace/${CI_PROJECT_NAME}/_merge_request.json'
+  script:
+    - '
+      echo "========== START";
+      pwd;
+      FILE_NAME="deploy_${CI_BUILD_ID}_$(date +%Y%m%d_%H%M)_${CI_COMMIT_SHORT_SHA}";
+      echo "==========";
+      echo "${FILE_NAME}"
+
+      for LABEL in $(cat $LABEL_PATH); do
+        echo "========== ${LABEL} ${CI_COMMIT_SHORT_SHA}";
+        BUILD_PATH=${BASE_PATH}/${LABEL}/build;
+        LINK_PATH=${BASE_PATH}/${LABEL}/deploy;
+        mkdir -p ${BUILD_PATH}/${FILE_NAME};
+        cp -r ./. ${BUILD_PATH}/${FILE_NAME};
+
+        ln -sfn ${BUILD_PATH}/${FILE_NAME} ${LINK_PATH};
+        ls -l ${LINK_PATH};
+
+        PROJECT="${LABEL}";
+        TARGET="${BASE_PATH}/${LABEL}/deploy/version.txt";
+        echo "Project: ${PROJECT}" > ${TARGET};
+        git log -n5 --date=iso-local --pretty=format:"%ad, %h, %s(%an)" >> ${TARGET};
+        echo >> ${TARGET};
+        cat ${TARGET};
+
+        echo "========== $(ls ${BUILD_PATH} | wc -l)";
+        if [ $(ls ${BUILD_PATH} | wc -l) -gt 10 ]; then
+          echo "remove more than 10 folder";
+          cd ${BUILD_PATH};
+          ls -t | sed -e "1,10d" | xargs rm -r;
+          cd ${CI_PROJECT_DIR};
+        fi;
+      done;
+      echo "========== END";
+      '
+
+yapi-upload:
+  # using python manage.py generate_swagger
+  stage: .post
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ /^(dev)$/
+  variables:
+    SCHEMA_URL: http://${SCHEMA_URL}
+  script:
+    - curl -o swagger.json ${SCHEMA_URL}
+    - echo $YAPI_IMPORT_CONFIG > yapi-import.json
+    - |
+      OUTPUT=$(yapi import)
+      echo $OUTPUT  # Log
+      echo $OUTPUT | grep -q 'success'  # Check success

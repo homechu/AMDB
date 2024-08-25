@@ -1,0 +1,100 @@
+[tool.poetry]
+name = "amdb"
+version = "0.2.1"
+description = "AMDB Project"
+authors = ["homechu58 <homechu58@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.7.4"
+aiohttp = "^3.5.4"
+arrow = "^1.1.1"
+colorama = "^0.4.4"
+django-smart-selects = "^1.5.9"
+djangorestframework = "^3.12.4"
+docutils = "^0.17.1"
+gevent = "^21.1.2"
+httpie = "^2.4.0"
+httplib2 = "^0.19.1"
+httpsig = "^1.3.0"
+ipdb = "^0.13.9"
+ipy = "^1.01"
+itsdangerous = "^2.0.1"
+jinja2 = "^3.0.1"
+kafka-python = "^2.0.2"
+mysqlclient = "^2.0.3"
+nitrosdk-python = "^3.1"
+openpyxl = "^3.0.7"
+paramiko = "^2.7.2"
+pika = "^1.2.0"
+prettytable = "^2.1.0"
+psutil = "^5.8.0"
+django = "^3.0.0"
+redis = "^3.5.3"
+redis-py-cluster = "^2.1.3"
+pycryptodome = "^3.10.1"
+pyopenssl = "^20.0.1"
+celery = "^5.1.2"
+pandas = "^1.3.1"
+pyyaml = "^6.0.0"
+tldextract = "^3.1.0"
+python-telegram-bot = "^13.7"
+pyvmomi = "^7.0.2"
+schema = "^0.7.4"
+timeout-decorator = "^0.5.0"
+xlrd = "^2.0.1"
+xlwt = "^1.3.0"
+vconnector = "^0.6.0"
+uwsgi = "^2"
+fire = "^0.4.0"
+selfpackage-security = "^0.0.4"
+django-redis = "^5.1.0"
+django-celery-results = "^2.2.0"
+sentry-sdk = "^1.29.2"
+selfpackage-sdk-domain = "0.0.2"
+python-nmap = "^0.7.1"
+selfpackage-sdk-shterm = "^1.0.2"
+drf-yasg = "^1.21.4"
+selfpackage-sdk-msg = "^0.0.11"
+pip = "^23.2"
+pathlib = "^1.0.1"
+django-safedelete = "^1.3.2"
+django-extensions = "^3.2.3"
+django-filter = "^23.2"
+selfpackage-django = "^0.13.1"
+minio = "^7.1.15"
+django-import-export = "^3.2.0"
+django-db-connection-pool = {extras = ["mysql"], version = "^1.2.4"}
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^5.0.0"
+pylint = "^2.17.4"
+black = "^22.0.0"
+pydocstyle = "^6.3.0"
+mypy = "^1.4.1"
+pytest-django = "^4.5.2"
+django-stubs = "^1.2.0"
+djangorestframework-stubs = "^1.0.0"
+werkzeug = "^2.0.0"
+django-debug-toolbar = "^3.0.0"
+faker = "^15.0.0"
+watchdog = "^3.0.0"
+uwsgitop = "^0.11"
+
+[tool.black]
+# FORMATTER STYLE
+line-length = 99
+target-version = ['py37']
+skip-string-normalization = true
+exclude = "migrations"
+
+[tool.isort]
+# make it compatible with black
+profile = "black" 
+lines_between_types = 1
+combine_as_imports = true
+atomic = true
+skip = "migrations"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
